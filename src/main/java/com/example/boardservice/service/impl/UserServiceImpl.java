@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
                     "insertUser ERROR! 회원가입 메서드를 확인해주세요\n" + "Params : " + userDTO);
         }
     }
+
     @Override
     public UserDTO login(String id, String password) {
         String cryptoPassword = SHA256Util.encryptSHA256(password);

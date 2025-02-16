@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserServiceImpl userService;
-    private static LoginResponse loginResponse;
 
     @PostMapping("sign-up")
     @ResponseStatus(HttpStatus.CREATED)
@@ -45,7 +44,7 @@ public class UserController {
         if (user == null) {
             return HttpStatus.NOT_FOUND;
         } else if (user != null) {
-            loginResponse = LoginResponse.success(user);
+            LoginResponse loginResponse = LoginResponse.success(user);
             if (user.getStatus() == (Status.ADMIN)) {
                 SessionUtil.setLoginAdminId(session, user.getUserId());
             } else {
@@ -83,6 +82,8 @@ public class UserController {
 
         try {
             userService.updatePassword(id, beforePassword, afterPassword);
+            UserDTO userInfo = userService.login(id, afterPassword);
+            LoginResponse loginResponse = LoginResponse.success(userInfo);
             ResponseEntity.ok(new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK));
         } catch (IllegalArgumentException e) {
             log.error("updatePassword 실패 : {}", e.getMessage());
@@ -98,7 +99,9 @@ public class UserController {
         String id = SessionUtil.getLoginMemberId(session);
 
         try {
+            UserDTO userInfo = userService.login(id, userDeleteId.getPassword());
             userService.deleteId(id, userDeleteId.getPassword());
+            LoginResponse loginResponse = LoginResponse.success(userInfo);
             responseEntity = new ResponseEntity<LoginResponse>(loginResponse, HttpStatus.OK);
         } catch (RuntimeException e) {
             log.error("deleteUserProfile 실패 : {}", e.getMessage());
