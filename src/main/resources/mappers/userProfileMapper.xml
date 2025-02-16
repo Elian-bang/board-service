@@ -27,8 +27,8 @@
     </delete>
 
     <insert id="register" parameterType="com.example.boardservice.dto.UserDTO">
-        INSERT INTO user (userId, passWord, nickName, createTime, isWithDraw, status)
-        VALUES (#{userId}, #{password}, #{nickName}, #{createTime}, #{isWithDraw}, #{status})
+        INSERT INTO user (userId, passWord, nickName, isAdmin, createTime, isWithDraw, status)
+        VALUES (#{userId}, #{password}, #{nickName}, #{isAdmin}, #{createTime}, #{isWithDraw}, #{status})
     </insert>
 
     <select id="findByIdAndPassword" resultType="com.example.boardservice.dto.UserDTO">
