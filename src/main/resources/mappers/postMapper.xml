@@ -8,6 +8,9 @@
     <insert id="register" parameterType="com.example.boardservice.dto.PostDTO">
         INSERT INTO post (name, isAdmin, contents, createTime, views, userId, categoryId, fileId, updateTime)
         VALUES (#{name}, #{isAdmin}, #{contents}, #{createTime}, #{views}, #{userId}, #{categoryId}, #{fileId}, #{updateTime})
+        <selectKey keyProperty="id" resultType="int">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 
     <select id="selectMyPosts" resultType="com.example.boardservice.dto.PostDTO">
