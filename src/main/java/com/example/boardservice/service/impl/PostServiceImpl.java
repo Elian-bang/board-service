@@ -33,14 +33,19 @@ public class PostServiceImpl implements PostService {
         postDTO.setCreateTime(new Date());
 
         if (memberInfo != null) {
-            postMapper.register(postDTO);
-            Integer postId = postDTO.getId();
-            for(int i=0; i<postDTO.getTagDTOList().size(); i++) {
-                TagDTO tagDTO = postDTO.getTagDTOList().get(i);
-                tagMapper.register(tagDTO);
-                Integer tagId = tagDTO.getId();
-                tagMapper.createPostTag(tagId, postId);
+            try {
+                postMapper.register(postDTO);
+                Integer postId = postDTO.getId();
+                for(int i=0; i<postDTO.getTagDTOList().size(); i++) {
+                    TagDTO tagDTO = postDTO.getTagDTOList().get(i);
+                    tagMapper.register(tagDTO);
+                    Integer tagId = tagDTO.getId();
+                    tagMapper.createPostTag(tagId, postId);
 
+                }
+            }catch (RuntimeException e) {
+                log.error("register ERROR! {}", e.getMessage());
+                throw new RuntimeException("register ERROR! 게시글 등록 메서드를 확인해주세요. " + e.getMessage());
             }
         } else {
             log.error("register ERROR! {}", postDTO);
@@ -50,14 +55,25 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDTO> getMyPosts(int accountId) {
-        List<PostDTO> postDTOList = postMapper.selectMyPosts(accountId);
+        List<PostDTO> postDTOList = null;
+        try {
+            postDTOList = postMapper.selectMyPosts(accountId);
+        }catch (RuntimeException e) {
+            log.error("getMyPosts ERROR! {}", e.getMessage());
+            throw new RuntimeException("getMyPosts ERROR! 내 게시글 조회 메서드를 확인해주세요." + e.getMessage());
+        }
         return postDTOList;
     }
 
     @Override
     public void updatePosts(PostDTO postDTO) {
         if (postDTO != null && postDTO.getId() != 0) {
-            postMapper.updatePosts(postDTO);
+            try {
+                postMapper.updatePosts(postDTO);
+            }catch (RuntimeException e) {
+                log.error("updatePosts ERROR! {}", postDTO);
+                throw new RuntimeException("updatePosts ERROR! 게시글 수정 메서드를 확인해주세요." + postDTO);
+            }
         } else {
             log.error("updatePosts ERROR! {}", postDTO);
             throw new RuntimeException("updatePosts ERROR! 게시글 수정 메서드를 확인해주세요." + postDTO);
@@ -68,7 +84,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePosts(int userId, int postId) {
         if (userId != 0 && postId != 0) {
-            postMapper.deletePosts(postId);
+            try {
+                postMapper.deletePosts(postId);
+            }catch (RuntimeException e) {
+                log.error("deletePosts ERROR! {}", e.getMessage());
+                throw new RuntimeException("deletePosts ERROR! 게시글 삭제 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("deletePosts ERROR! {}", postId);
             throw new RuntimeException("deletePosts ERROR! 게시글 삭제 메서드를 확인해주세요." + postId);
@@ -78,7 +99,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void registerComment(CommentDTO commentDTO) {
         if(commentDTO.getPostId() != 0) {
-            commentMapper.register(commentDTO);
+            try {
+                commentMapper.register(commentDTO);
+            }catch (RuntimeException e) {
+                log.error("registerComment ERROR! {}", e.getMessage());
+                throw new RuntimeException("registerComment ERROR! 댓글 등록 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("registerComment ERROR! {}", commentDTO);
             throw new RuntimeException("registerComment ERROR! 댓글 등록 메서드를 확인해주세요." + commentDTO);
@@ -88,7 +114,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updateComment(CommentDTO commentDTO) {
         if(commentDTO.getId() != 0) {
-            commentMapper.updateComments(commentDTO);
+            try {
+                commentMapper.updateComments(commentDTO);
+            }catch (RuntimeException e) {
+                log.error("updateComment ERROR! {}", e.getMessage());
+                throw new RuntimeException("updateComment ERROR! 댓글 수정 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("updateComment ERROR!");
             throw new RuntimeException("updateComment ERROR! 댓글 수정 메서드를 확인해주세요.");
@@ -98,7 +129,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePostComment(int userId, int commendId) {
         if(userId != 0 && commendId != 0) {
-            commentMapper.deleteComments(commendId);
+            try {
+                commentMapper.deleteComments(commendId);
+            }catch (RuntimeException e) {
+                log.error("deletePostComment ERROR! {}", e.getMessage());
+                throw new RuntimeException("deletePostComment ERROR! 댓글 삭제 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("deletePostComment ERROR! {}", commendId);
             throw new RuntimeException("deletePostComment ERROR! 댓글 삭제 메서드를 확인해주세요. " + commendId);
@@ -108,7 +144,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void registerTag(TagDTO tagDTO) {
         if(tagDTO != null) {
-            tagMapper.register(tagDTO);
+            try {
+                tagMapper.register(tagDTO);
+            }catch (RuntimeException e) {
+                log.error("registerTag ERROR! {}", e.getMessage());
+                throw new RuntimeException("registerTag ERROR! 태그 등록 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("registerTag ERROR! {}", tagDTO);
             throw new RuntimeException("registerTag ERROR! 태그 등록 메서드를 확인해주세요." + tagDTO);
@@ -118,7 +159,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void updateTag(TagDTO tagDTO) {
         if(tagDTO != null) {
-            tagMapper.updateTags(tagDTO);
+            try {
+                tagMapper.updateTags(tagDTO);
+            }catch (RuntimeException e) {
+                log.error("updateTag ERROR! {}", e.getMessage());
+                throw new RuntimeException("updateTag ERROR! 태그 수정 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("updateTag ERROR! {}", tagDTO);
             throw new RuntimeException("updateTag ERROR! 태그 수정 메서드를 확인해주세요." + tagDTO);
@@ -128,7 +174,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePostTag(int userId, int tagId) {
         if(userId != 0 && tagId != 0) {
-            tagMapper.deleteTags(tagId);
+            try {
+                tagMapper.deleteTags(tagId);
+            }catch (RuntimeException e) {
+                log.error("deletePostTag ERROR! {}", e.getMessage());
+                throw new RuntimeException("deletePostTag ERROR! 태그 삭제 메서드를 확인해주세요." + e.getMessage());
+            }
         } else {
             log.error("deletePostTag ERROR! {}", tagId);
             throw new RuntimeException("deletePostTag ERROR! 태그 삭제 메서드를 확인해주세요." + tagId);
